@@ -1,5 +1,8 @@
 <template>
-  <div class="bigbox">
+  <div
+    class="bigbox"
+    :style="{ backgroundImage: `url(${backgroundImageUrl})` }"
+  >
     <button @click="goBack" class="back-button">返回</button>
     <div class="main-container">
       <div class="left-box">
@@ -22,7 +25,7 @@
           <input
             v-model="newMessage"
             @keyup.enter="sendMessage"
-            placeholder="Type your message..."
+            placeholder="请输入诗句"
             class="chat-input"
             :disabled="!isUserTurn"
           />
@@ -35,7 +38,8 @@
           </button>
         </div>
         <div class="countdown-timer">
-          请说出一句带有 {{ word }} 的诗句 Time left: {{ countdown }}s
+          第{{ messageCount }}回合，请说出一句带有 {{ word }} 的诗句 Time left:
+          {{ countdown }}s
         </div>
       </div>
       <div class="right-box">
@@ -58,6 +62,7 @@
 
 <script>
 import axios from "axios";
+import bgi from "../assets/bgi_Flower.jpg";
 
 export default {
   props: {
@@ -77,92 +82,116 @@ export default {
       rightBoxMessages: [],
       showModal: false,
       selectedWord: "",
-      needReset:false,
+      needReset: false,
+      messageCount: 0,
+      backgroundImageUrl: bgi, // 动态加载图片
+      thinkingMessage: "思考中……",
     };
   },
   methods: {
     goBack() {
       this.$router.go(-1); // 返回上一页
     },
-    // sendMessage() {
-    //   if (this.newMessage.trim() !== "" && this.isUserTurn) {
-    //     // Add the user's message
-    //     this.messages.push({ text: this.newMessage.trim(), isReceived: false });
-    //     this.newMessage = "";
-    //     this.resetCountdown();
-    //     this.isUserTurn = false;
-
-    //     // Simulate receiving a response from the backend
-    //     this.simulateBackendResponse();
-    //   }
-    // },
-    // simulateBackendResponse() {
-    //   setTimeout(() => {
-    //     const responseMessage = "This is a response from the backend.";
-    //     this.messages.push({ text: responseMessage, isReceived: true });
-    //     this.$nextTick(() => {
-    //       this.scrollToBottom();
-    //     });
-    //     // Display the response in the left and right boxes
-    //     this.leftBoxMessages.pop();
-    //     this.leftBoxMessages.push(responseMessage);
-    //     this.rightBoxMessages.pop();
-    //     this.rightBoxMessages.push(responseMessage);
-    //     this.isUserTurn = true;
-    //     this.startCountdown();
-    //   }, 1000); // Simulate a 1-second delay for the backend response
-    // },
     async sendMessage() {
-      
       if (this.newMessage.trim() !== "" && this.isUserTurn) {
         // Add the user's message
         const userMessage = this.newMessage.trim();
         this.messages.push({ text: this.newMessage.trim(), isReceived: false });
-        this.newMessage = "";
         this.resetCountdown();
         this.isUserTurn = false;
         console.log(userMessage);
+        this.messageCount++;
+        // 显示“思考中……”
+        this.messages.push({ text: this.thinkingMessage, isReceived: true });
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
+        // Send the user's message to the backend
+        await axios
+          .post(
+            "http://localhost:8080/poem/interact",
+            {
+              userAnswer: userMessage,
+              keyword: this.selectedWord,
+              needReset: this.needReset,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((response) => {
+            const { code, message, data } = response.data;
+            if (code === 0) {
+            
+            // 检查是否为第五次发送消息
+            if (this.messageCount === 1) {
+              this.updateBackgroundImage();
+            }
         
-          // Send the user's message to the backend
-      await axios.post("http://localhost:8080/poem/interact",{ userAnswer: userMessage, keyword: this.selectedWord, needReset: this.needReset}, {
-  headers: {
-    'Content-Type': 'application/json'
-  }
-}).then((response)=> {
-        const {code, message, data} = response.data;
-        if (code === 0) {
-          this.messages.push({ text: data[1].p_paragraph, isReceived: true });
-          this.$nextTick(() => {
-            this.scrollToBottom();
+              this.messages.pop();
+              this.messages.push({
+                text: message,
+                isReceived: true,
+              });
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
+              // Display the response in the left and right boxes
+              this.leftBoxMessages = [
+                data[1].p_title,
+                data[1].p_author_name,
+                data[1].p_paragraph,
+              ];
+
+              this.rightBoxMessages = [
+                data[0].p_title,
+                data[0].p_author_name,
+                data[0].p_paragraph,
+              ];
+            } else if (code === 1) {
+              console.log(message);
+            } else {
+              console.log("hi");
+            }
+            this.isUserTurn = true;
+            this.startCountdown();
+            this.needReset = false;
+            this.newMessage = "";
+            // 发送消息计数增加
+            
+            
           });
-          // Display the response in the left and right boxes
-          this.leftBoxMessages.pop();
-          this.leftBoxMessages.pop();
-          this.leftBoxMessages.pop();
-          this.leftBoxMessages.push(data[1].p_title);
-          this.leftBoxMessages.push(data[1].p_author_name);
-          this.leftBoxMessages.push(data[1].p_paragraph);
-          this.rightBoxMessages.pop();
-          this.rightBoxMessages.pop();
-          this.rightBoxMessages.pop();
-          this.rightBoxMessages.push(data[0].p_title);
-          this.rightBoxMessages.push(data[0].p_author_name);
-          this.rightBoxMessages.push(data[0].p_paragraph);
-        } else if (code === 1) {
-          console.log(data);
-          console.log(message);
-        } else {
-          console.log("hi");
-        }
-        console.log("hihihi");
-        this.isUserTurn = true;
-        this.startCountdown();
-        this.needReset = false;
-      })
         // Simulate receiving a response from the backend
       }
     },
 
+    async updateBackgroundImage() {
+  
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/ai/img",
+          {
+            content: this.newMessage.trim(),
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const { code, message, data } = response.data;
+        if (code === 0) {
+          this.backgroundImageUrl = data;
+          console.log("img接口code=0");
+        } else {
+          console.log(message);
+        }
+      } catch (error) {
+        console.error("Error updating background image:", error);
+      }
+    },
     startCountdown() {
       this.countdown = 30;
       if (this.timer) {
@@ -194,14 +223,6 @@ export default {
     },
   },
   mounted() {
-    // const savedWord = localStorage.getItem("selectedWord");
-    // if (savedWord) {
-    //   this.selectedWord = savedWord;
-    // } else {
-    //   this.selectedWord = this.word;
-    //   localStorage.setItem("selectedWord", this.word);
-    // }
-    // console.log(this.selectedWord);
     this.selectedWord = this.word;
     this.needReset = true;
     this.scrollToBottom();
@@ -212,13 +233,14 @@ export default {
 
 <style scoped>
 .bigbox {
-  background: url("../assets/bgi_Flower.jpg") no-repeat center center fixed;
+  background: no-repeat center center fixed;
   background-size: cover;
   height: 100vh;
   width: 100vw;
   display: flex;
   overflow: hidden;
   background-position: center;
+  position: relative;
 }
 .back-button {
   position: absolute;
@@ -365,4 +387,3 @@ export default {
   text-align: center;
 }
 </style>
-
