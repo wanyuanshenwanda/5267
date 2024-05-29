@@ -2,7 +2,7 @@
   <div class="navbar">
     <ul class="navbar-list">
       <li><router-link to="/">主页</router-link></li>
-      <li>登录</li>
+      <li><router-link to="/Login">登录</router-link></li>
       <li>我的</li>
     </ul>
   </div>
@@ -40,9 +40,9 @@ export default {
 }
 .navbar-list a {
   text-decoration: none;
-  color: #007bff;
+  color: #4e4e4e;
 }
 .navbar-list a:hover {
-  color: #0056b3;
+  color: #4e4e4e;
 }
 </style>

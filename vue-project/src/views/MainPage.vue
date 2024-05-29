@@ -1,13 +1,5 @@
 <template>
   <div class="bigbox">
-    <!-- <div class="head">
-      <ul class="header">
-        <li><a>首页</a></li>
-        <li><a>登录</a></li>
-        <li><a>注册</a></li>
-      </ul>
-      <div class="leftimg"><img src="../assets/Li.jpg" alt="" /></div>
-    </div> -->
     <div class="text">
       <h2>拾遗</h2>
       <h4>保护|传承|创新</h4>
@@ -18,7 +10,7 @@
         <li @click="goToFlowerPage">
           <span>飞花令</span><img src="../assets/bgi_Flower.jpg" alt="" />
         </li>
-        <li><span>传统建筑</span><img src="../assets/2.jpeg" alt="" /></li>
+        <li><span>传统建筑</span><img src="../assets/col_2.jpeg" alt="" /></li>
         <li><span>传统文化</span><img src="../assets/3.jpeg" alt="" /></li>
         <li><span>传统美食</span><img src="../assets/4.jpeg" alt="" /></li>
         <li><span>传统工艺</span><img src="../assets/5.jpeg" alt="" /></li>
@@ -43,46 +35,9 @@ export default {
     goToFlowerPage() {
       this.$router.push({ name: "FlowerPage" });
     },
-    // 对下部图片生效
-    handleMouseEnter(event) {
-      const target = event.currentTarget;
-      target.style.width = "400px";
-      Array.from(target.parentNode.children).forEach((child) => {
-        if (child !== target) {
-          child.style.width = "100px";
-        }
-      });
-    },
-    handleMouseLeave(event) {
-      Array.from(event.currentTarget.children).forEach((child) => {
-        if (parseInt(child.style.width) > 100) {
-          child.style.width = "100px";
-        }
-      });
-    },
-    // 对顶部
-    handleMouseOver(event) {
-      if (event.target.nodeName.toLowerCase() === "div") {
-        event.target.style.background = "gray";
-        const delBtn = event.target.lastElementChild;
-        delBtn.style.display = "block";
-      }
-    },
-    handleMouseOut(event) {
-      if (event.target.nodeName.toLowerCase() === "div") {
-        event.target.style.background = "";
-        const delBtn = event.target.lastElementChild;
-        delBtn.style.display = "none";
-      }
-    },
   },
   mounted() {
-    document.querySelectorAll(".menu li").forEach((li) => {
-      li.addEventListener("mouseenter", this.handleMouseEnter);
-    });
-    document
-      .querySelector(".menu")
-      .addEventListener("mouseleave", this.handleMouseLeave);
+    document.title = "主页";
   },
 };
 </script>
@@ -96,58 +51,12 @@ export default {
   height: 100%;
   width: 100%;
   margin: 0;
-  background: url("../assets/bgi_MainPage.jpeg");
+  background: url("../assets/bgi_MainPage02.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
 }
-.head {
-  width: 100%;
-  height: 45px;
-  background-color: rgb(224, 213, 213, 0.5);
-}
-.header {
-  float: right;
-  display: flex;
-  flex: 1;
-  list-style: none;
-  /* margin:30px; */
-  margin: 0;
-  line-height: 45px;
-  cursor: pointer;
-}
-.header li {
-  padding-right: 35px;
-  padding-left: 35px;
-  font-family: "楷体", serif;
-  font-size: 25px;
-  text-align: center;
-}
-.header li:hover {
-  background-color: rgb(150, 98, 98, 0.5);
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-.leftimg {
-  padding: 40px;
-  transition: all 0.6s;
-}
-.leftimg img {
-  width: 80px;
-  height: 80px;
-  animation: rotateImg 5s;
-  animation-iteration-count: infinite;
-}
-@keyframes rotateImg {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
+
 .text {
   margin-top: 100px;
   margin-left: 250px;
@@ -178,6 +87,12 @@ h4 {
   overflow: hidden;
   margin: 0;
   cursor: pointer;
+  transition: width 0.4s ease-in-out;
+  border-radius: 15px;
+}
+.menu li:hover {
+  width: 400px; /* 鼠标悬停时的宽度 */
+  transition-delay: 0.2s;
 }
 .menu li > span {
   position: absolute;
@@ -193,6 +108,10 @@ h4 {
 .menu li > img {
   width: 400px;
   height: 600px;
+  opacity: 0.5;
+}
+.menu li:hover > img {
+  opacity: 1;
 }
 
 .speak {
@@ -232,12 +151,15 @@ input[type="button"] {
   border-width: 1px;
 }
 .footer {
-  text-align: center;
+  text-align: right;
   line-height: 20px;
   padding: 10px;
   font-family: "楷体", serif;
   font-size: 20px;
   font-weight: initial;
+  position: fixed;
+  right: 0;
+  bottom: 0;
 }
 input[type="button"]:hover {
   background-color: rgb(125, 98, 98);

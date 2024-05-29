@@ -28,6 +28,7 @@
             placeholder="请输入诗句"
             class="chat-input"
             :disabled="!isUserTurn"
+            ref="input"
           />
           <button
             @click="sendMessage"
@@ -52,7 +53,7 @@
       </div>
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
-          <h2>您输了</h2>
+          <h2>{{ loseMessage }}</h2>
           <button @click="closeModal">知道了</button>
         </div>
       </div>
@@ -86,8 +87,18 @@ export default {
       messageCount: 0,
       backgroundImageUrl: bgi, // 动态加载图片
       thinkingMessage: "思考中……",
+      loseMessage: "",
     };
   },
+  watch: {
+  isUserTurn(newValue) {
+    if (newValue) {
+      this.$nextTick(() => {
+        this.$refs.input.focus();
+      });
+    }
+  }
+},
   methods: {
     goBack() {
       this.$router.go(-1); // 返回上一页
@@ -99,6 +110,7 @@ export default {
         this.messages.push({ text: this.newMessage.trim(), isReceived: false });
         this.resetCountdown();
         this.isUserTurn = false;
+        this.newMessage = "";
         console.log(userMessage);
         this.messageCount++;
         // 显示“思考中……”
@@ -124,12 +136,13 @@ export default {
           .then((response) => {
             const { code, message, data } = response.data;
             if (code === 0) {
-            
-            // 检查是否为第五次发送消息
-            if (this.messageCount === 1) {
-              this.updateBackgroundImage();
-            }
-        
+              // 检查是否为第五倍数次发送消息
+              if (this.messageCount % 5 === 0) {
+                this.updateBackgroundImage(userMessage);
+              } else if (this.messageCount % 5 === 3) {
+                this.backgroundImageUrl = bgi;
+              }
+
               this.messages.pop();
               this.messages.push({
                 text: message,
@@ -141,39 +154,38 @@ export default {
               // Display the response in the left and right boxes
               this.leftBoxMessages = [
                 data[1].p_title,
-                data[1].p_author_name,
+                data[1].author_name,
                 data[1].p_paragraph,
               ];
 
               this.rightBoxMessages = [
                 data[0].p_title,
-                data[0].p_author_name,
+                data[0].author_name,
                 data[0].p_paragraph,
               ];
             } else if (code === 1) {
               console.log(message);
+              this.loseMessage = message;
+              this.showModal = true;
             } else {
               console.log("hi");
             }
             this.isUserTurn = true;
             this.startCountdown();
             this.needReset = false;
-            this.newMessage = "";
+            
             // 发送消息计数增加
-            
-            
           });
         // Simulate receiving a response from the backend
       }
     },
 
-    async updateBackgroundImage() {
-  
+    async updateBackgroundImage(userMessage) {
       try {
         const response = await axios.post(
           "http://localhost:8080/ai/img",
           {
-            content: this.newMessage.trim(),
+            content: userMessage,
           },
           {
             headers: {
@@ -201,6 +213,7 @@ export default {
         this.countdown--;
         if (this.countdown <= 0) {
           clearInterval(this.timer);
+          this.loseMessage = "时间已到";
           this.showModal = true;
         }
       }, 1000);
@@ -219,7 +232,7 @@ export default {
       this.showModal = false;
       this.resetCountdown();
       this.startCountdown;
-      window.location.reload();
+      this.$router.go(-1); // 返回上一页
     },
   },
   mounted() {
@@ -280,10 +293,34 @@ export default {
 .left-box,
 .right-box {
   width: 150px;
-  height: 150px;
+  height: 300px;
   margin: 0 10px;
   display: flex;
-  align-self: center;
+  flex-direction: column;
+}
+
+.left-box div,
+.right-box div {
+  text-align: center; /* 水平居中 */
+  white-space: pre-wrap; /* 保留空白符并允许换行 */
+  word-break: break-all; /* 允许在单词内换行 */
+}
+
+/* 特定于标题、作者和段落的样式 */
+.left-box div:nth-child(1),
+.right-box div:nth-child(1) {
+  font-weight: bold; /* 让标题更加突出 */
+}
+
+.left-box div:nth-child(2),
+.right-box div:nth-child(2) {
+  font-style: italic; /* 作者名使用斜体 */
+  margin: 10px 0; /* 添加一些垂直空间 */
+}
+
+.left-box div:nth-child(3),
+.right-box div:nth-child(3) {
+  text-align: justify; /* 段落两端对齐 */
 }
 
 .chat-container {
