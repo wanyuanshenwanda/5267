@@ -37,10 +37,17 @@ export default {
 }
 .navbar-list li {
   margin: 0 15px;
+  padding:5px;
+  display: inline-block; /* 将列表项作为块状元素显示 */
+  box-sizing: border-box; /* 确保填充不会改变元素的最终大小 */
+  cursor: pointer;
 }
 .navbar-list a {
+  display: block; /* 设置a标签为块状元素填满li */
   text-decoration: none;
   color: #4e4e4e;
+  height: 100%; /* 设置高度为100%，确保a标签填满li */
+  width: 100%; /* 设置宽度为100%，确保a标签填满li */
 }
 .navbar-list a:hover {
   color: #4e4e4e;

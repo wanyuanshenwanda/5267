@@ -35,6 +35,9 @@
         this.$router.push({ name: "Register" });
       },
     },
+    mounted() {
+      document.title = "登录";
+    },
   };
   </script>
   

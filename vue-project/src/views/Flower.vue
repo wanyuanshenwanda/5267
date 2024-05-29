@@ -144,6 +144,7 @@ export default {
               }
 
               this.messages.pop();
+              console.log(message);
               this.messages.push({
                 text: message,
                 isReceived: true,
@@ -154,13 +155,13 @@ export default {
               // Display the response in the left and right boxes
               this.leftBoxMessages = [
                 data[1].p_title,
-                data[1].author_name,
+                "[" + data[1].dynasty + "]" + data[1].author_name,
                 data[1].p_paragraph,
               ];
 
               this.rightBoxMessages = [
                 data[0].p_title,
-                data[0].author_name,
+                "[" + data[0].dynasty + "]" + data[0].author_name,
                 data[0].p_paragraph,
               ];
             } else if (code === 1) {
@@ -239,7 +240,7 @@ export default {
     this.selectedWord = this.word;
     this.needReset = true;
     this.scrollToBottom();
-    this.startCountdown();
+    document.title = "飞花令";
   },
 };
 </script>
@@ -301,9 +302,11 @@ export default {
 
 .left-box div,
 .right-box div {
+  font-family: "楷体", "KaiTi", serif; /* 添加楷体字体 */
   text-align: center; /* 水平居中 */
   white-space: pre-wrap; /* 保留空白符并允许换行 */
   word-break: break-all; /* 允许在单词内换行 */
+  line-height: 1.6;
 }
 
 /* 特定于标题、作者和段落的样式 */
@@ -320,7 +323,7 @@ export default {
 
 .left-box div:nth-child(3),
 .right-box div:nth-child(3) {
-  text-align: justify; /* 段落两端对齐 */
+  text-align: center; /* 段落两端对齐 */
 }
 
 .chat-container {

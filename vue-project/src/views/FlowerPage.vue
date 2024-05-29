@@ -86,6 +86,9 @@ export default {
       }
     },
   },
+  mounted() {
+    document.title = "飞花令";
+  },
 };
 </script>
 

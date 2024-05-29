@@ -6,11 +6,11 @@
       <p>感受诗词中传统文化的魅力</p>
     </div>
     <div id="nav">
-      <ul class="menu">
-        <li @click="goToFlowerPage">
+      <ul class="menu" @mouseenter="scrollToBottom">
+        <li @click="goToFlowerPage" >
           <span>飞花令</span><img src="../assets/bgi_Flower.jpg" alt="" />
         </li>
-        <li><span>传统建筑</span><img src="../assets/col_2.jpeg" alt="" /></li>
+        <li @click="goToAsk"><span>诗词问答</span><img src="../assets/col_02.jpg" alt="" /></li>
         <li><span>传统文化</span><img src="../assets/3.jpeg" alt="" /></li>
         <li><span>传统美食</span><img src="../assets/4.jpeg" alt="" /></li>
         <li><span>传统工艺</span><img src="../assets/5.jpeg" alt="" /></li>
@@ -34,6 +34,15 @@ export default {
   methods: {
     goToFlowerPage() {
       this.$router.push({ name: "FlowerPage" });
+    },
+    goToAsk() {
+      this.$router.push({ name: "Ask" });
+    },
+    scrollToBottom() {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth' // 可选，平滑滚动
+      });
     },
   },
   mounted() {
@@ -82,7 +91,7 @@ h4 {
     flex:1; */
   list-style: none;
   float: left;
-  width: 100px;
+  width: 150px;
   height: 600px;
   overflow: hidden;
   margin: 0;

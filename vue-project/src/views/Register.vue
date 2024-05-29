@@ -34,6 +34,9 @@ export default {
       this.$router.push({ name: "Login" });
     },
   },
+  mounted() {
+    document.title = "注册";
+  },
 };
 </script>
 <style scoped>

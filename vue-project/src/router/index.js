@@ -4,7 +4,7 @@ import FlowerPage from '../views/FlowerPage.vue';
 import Flower from '../views/Flower.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
-
+import Ask from '../views/Ask.vue';
 const routes = [
     {
         path: '/',
@@ -36,6 +36,12 @@ const routes = [
         path: '/Register',
         name: 'Register',
         component: Register,
+        meta: { showNavbar: true }
+    },
+    {
+        path: '/Ask',
+        name: 'Ask',
+        component: Ask,
         meta: { showNavbar: true }
     }
 
