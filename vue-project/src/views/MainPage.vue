@@ -12,12 +12,12 @@
         </li>
         <li @click="goToAsk"><span>诗词问答</span><img src="../assets/col_02.jpg" alt="" /></li>
         <li><span>传统文化</span><img src="../assets/3.jpeg" alt="" /></li>
-        <li><span>传统美食</span><img src="../assets/4.jpeg" alt="" /></li>
+        <li><span>传统美食</span><img src="../assets/1.jpeg" alt="" /></li>
         <li><span>传统工艺</span><img src="../assets/5.jpeg" alt="" /></li>
-        <li><span>传统戏曲</span><img src="../assets/login.jpeg" alt="" /></li>
-        <li><span>传统文学</span><img src="../assets/7.jpeg" alt="" /></li>
-        <li><span>传统礼仪</span><img src="../assets/8.jpeg" alt="" /></li>
-        <li><span>传统精神</span><img src="../assets/9.jpeg" alt="" /></li>
+        <li><span>传统戏曲</span><img src="../assets/image.png" alt="" /></li>
+        <li><span>传统文学</span><img src="../assets/image2.png" alt="" /></li>
+        <li><span>传统礼仪</span><img src="../assets/image1.png" alt="" /></li>
+        
       </ul>
     </div>
     <div id="content"></div>
